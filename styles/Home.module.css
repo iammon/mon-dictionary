@@ -1,0 +1,108 @@
+.container {
+    min-height: 100vh;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9; /* Bright background */
+    color: #333; /* Darker text for readability */
+}
+
+.title {
+    font-family: 'ADLaM Display', sans-serif;
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #209CEE; /* Optional: Adjust color if needed */
+}
+
+
+.searchBar {
+    width: 100%;
+    max-width: 600px;
+    padding: 0.75rem 1rem;
+    font-size: 1.2rem;
+    border: 2px solid #209CEE; /* Bright border */
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s;
+    margin-bottom: 2rem;
+    background-color: #ffffff; /* Bright input field */
+    color: #333; /* Darker input text */
+}
+
+.searchBar:focus {
+    border-color: #0056b3; /* Darker blue on focus */
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Blue glow */
+}
+
+.results {
+    width: 100%;
+    max-width: 600px;
+    text-align: left;
+}
+
+.entry {
+    background-color: #ffffff; /* Bright entry background */
+    margin: 0.5rem 0;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    color: #333;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.entry:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* More shadow on hover */
+}
+
+.entry strong {
+    color: #007bff; /* Bright blue for key text */
+    font-weight: bold;
+}
+
+.noResultsMessage {
+    color: #555; /* Subtle text color for no-results message */
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+/* Center align the title for smaller screens */
+@media (max-width: 768px) {
+    .title {
+        text-align: center;
+        margin: 0 auto; /* Optional: ensures it is horizontally centered */
+    }
+}
+
+.discordLink {
+    display: block;
+    margin: 20px auto; /* Center the link */
+    text-align: center;
+}
+
+.discordIcon {
+    width: 40px; /* Adjust size as needed */
+    height: 40px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.discordIcon:hover {
+    transform: scale(1.1); /* Slightly enlarge the icon on hover */
+}
+
+.discordSection {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.discordText {
+    font-size: 12px;
+    font-weight: bold;
+    color: #777;
+    line-height: 1.5;
+}

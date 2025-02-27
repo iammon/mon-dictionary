@@ -1,0 +1,25 @@
+{
+    "name": "Mon Dictionary",
+    "short_name": "Dictionary",
+    "icons": [
+      {
+        "src": "/favicon-192x192.png",
+        "type": "image/png",
+        "sizes": "192x192"
+      },
+      {
+        "src": "/apple-touch-icon.png",
+        "type": "image/png",
+        "sizes": "180x180"
+      },
+      {
+        "src": "/favicon-32x32.png",
+        "type": "image/png",
+        "sizes": "32x32"
+      }
+    ],
+    "theme_color": "#209CEE",
+    "background_color": "#FFFFFF",
+    "display": "standalone"
+  }
+  
