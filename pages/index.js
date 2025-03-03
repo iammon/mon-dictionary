@@ -2,11 +2,11 @@ import { useState } from 'react';
 import styles from '../styles/Home.module.css';
 import Image from 'next/image';
 
-export default function Home({ dictionary }) {
+export default function Home() {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
 
-    const handleSearch = (e) => {
+    const handleSearch = async (e) => {
         const searchQuery = e.target.value.trim().toLowerCase();
         setQuery(searchQuery);
 
@@ -15,25 +15,13 @@ export default function Home({ dictionary }) {
             return;
         }
 
-        // Find words alphabetically starting with the query
-        const firstLetter = searchQuery[0];
-        const entries = dictionary[firstLetter];
-        if (entries) {
-            const sortedKeys = Object.keys(entries).sort(); // Sort dictionary keys alphabetically
-            const startIndex = sortedKeys.findIndex((key) => key.startsWith(searchQuery));
-            if (startIndex !== -1) {
-                // Get the next 10 words
-                const nextWords = sortedKeys.slice(startIndex, startIndex + 5);
-                const definitions = nextWords.map((word) => ({
-                    word,
-                    definitions: entries[word],
-                }));
-                setResults(definitions);
-            } else {
-                setResults([]); // No matches
-            }
-        } else {
-            setResults([]); // No matches for the first letter
+        try {
+            const res = await fetch(`/api/search?query=${searchQuery}`);
+            const data = await res.json();
+            setResults(data.results);
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+            setResults([]);
         }
     };
 
@@ -83,17 +71,3 @@ export default function Home({ dictionary }) {
     );
 }
 
-import fs from 'fs';
-import path from 'path';
-
-export async function getStaticProps() {
-    const filePath = path.join(process.cwd(), 'public', 'optimized_dict.json'); // Path to the file
-    const jsonData = fs.readFileSync(filePath, 'utf-8');
-    const data = JSON.parse(jsonData);
-
-    return {
-        props: {
-            dictionary: data.dictionary,
-        },
-    };
-}
