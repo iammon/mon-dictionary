@@ -8,15 +8,15 @@ export default function Navbar() {
 
     return (
         <nav className={styles.navbar}>
-            <div className={styles.logo}>
-                <Link
-                    href="/"
-                    className={currentPath === '/' ? styles.activeLink : ''}
-                >
-                    Mon Dictionary
-                </Link>
-            </div>
             <ul className={styles.navLinks}>
+                <li>
+                    <Link
+                        href="/"
+                        className={currentPath === '/' ? styles.activeLink : ''}
+                    >
+                        Dictionary
+                    </Link>
+                </li>
                 <li>
                     <Link
                         href="/learn-mon"
