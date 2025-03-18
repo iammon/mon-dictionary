@@ -10,11 +10,11 @@
 }
 
 .title {
-    font-family: 'ADLaM Display', sans-serif;
+    font-family: sans-serif;
     font-size: 3rem;
-    font-weight: bold;
+    font-weight: 900;
     margin-bottom: 20px;
-    color: #209CEE; /* Optional: Adjust color if needed */
+    color: #333; /* Optional: Adjust color if needed */
 }
 
 
@@ -23,7 +23,7 @@
     max-width: 600px;
     padding: 0.75rem 1rem;
     font-size: 1.2rem;
-    border: 2px solid #209CEE; /* Bright border */
+    border: 2px solid #ffaa00; /* Bright border */
     border-radius: 8px;
     outline: none;
     transition: all 0.3s;
@@ -33,7 +33,7 @@
 }
 
 .searchBar:focus {
-    border-color: #0056b3; /* Darker blue on focus */
+    border-color: #ffaa00; /* Darker blue on focus */
     box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Blue glow */
 }
 
