@@ -27,7 +27,7 @@ export default function Home() {
 
     return (
         <div className={styles.container}>
-            <h1 className={styles.title}>Mon Dictionary</h1>
+            <h1 className={styles.monTitle}>Mon Dictionary</h1>
             <input
                 type="text"
                 value={query}

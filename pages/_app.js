@@ -1,10 +1,11 @@
 import '../styles/globals.css';
 import Navbar from '../components/Navbar';
 import Head from 'next/head';
+import { GeistSans } from 'geist/font/sans';
 
 export default function MyApp({ Component, pageProps }) {
     return (
-        <>
+        <main className={GeistSans.variable}>
             <Head>
                 {/* Favicon */}
                 <link rel="icon" href="/favicon.ico?v=2" />
@@ -32,6 +33,6 @@ export default function MyApp({ Component, pageProps }) {
             </Head>
             <Navbar />
             <Component {...pageProps} />
-        </>
+        </main>
     );
 }
