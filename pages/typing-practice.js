@@ -1,10 +1,6 @@
-import styles from '../styles/TypingPractice.module.css';
+import TypingPractice from '../components/TypingPractice';
 
-export default function TypingPractice() {
-    return (
-        <div className={styles.container}>
-            <h1>Typing Practice</h1>
-            <p>Updates Under Construction!</p>
-        </div>
-    );
+export default function TypingPracticePage() {
+    return <TypingPractice />;
 }
+
