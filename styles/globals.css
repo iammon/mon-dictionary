@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
 body {
-    font-family: var(--font-geist-sans), 'Inter', sans-serif;
+    font-family: var(--font-geist-sans), 'Inter', sans-serif, 'Noto Sans Myanmar';
     margin: 0;
     padding: 0;
     background-color: #f9f9f9;
