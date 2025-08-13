@@ -2,13 +2,12 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import sentences from '../data/sentences';
 import styles from '../styles/TypingPractice.module.css';
 
-// Grapheme-aware segmenter
 const segmenter = typeof Intl !== 'undefined' && Intl.Segmenter
   ? new Intl.Segmenter('und', { granularity: 'grapheme' })
   : null;
 
 function toGraphemes(str) {
-  if (!segmenter) return Array.from(str); // fallback
+  if (!segmenter) return Array.from(str);
   const out = [];
   for (const seg of segmenter.segment(str)) out.push(seg.segment);
   return out;
@@ -22,7 +21,7 @@ export default function TypingPractice() {
   const [gpm, setGpm] = useState(0);
   const [accuracy, setAccuracy] = useState(100);
   const inputRef = useRef(null);
-  const tickRef = useRef(null); // for interval id
+  const tickRef = useRef(null);
 
   const sentenceG = useMemo(() => toGraphemes(sentence), [sentence]);
   const inputG = useMemo(() => toGraphemes(input), [input]);
@@ -30,24 +29,18 @@ export default function TypingPractice() {
   const countCorrect = (target, typed) => {
     const n = Math.min(target.length, typed.length);
     let correct = 0;
-    for (let i = 0; i < n; i += 1) {
-      if (typed[i] === target[i]) correct += 1;
-    }
+    for (let i = 0; i < n; i += 1) if (typed[i] === target[i]) correct += 1;
     return correct;
   };
 
   const isFinished = inputG.length >= sentenceG.length;
 
-  useEffect(() => {
-    loadRandomSentence();
-  }, []);
+  useEffect(() => { loadRandomSentence(); }, []);
 
-  // Start timer on first grapheme
   useEffect(() => {
     if (!startTime && inputG.length > 0) setStartTime(Date.now());
   }, [inputG.length, startTime]);
 
-  // Update metrics every second
   useEffect(() => {
     if (tickRef.current) clearInterval(tickRef.current);
     if (!startTime) return;
@@ -56,23 +49,17 @@ export default function TypingPractice() {
       const stopAt = endTime ?? Date.now();
       const minutes = Math.max((stopAt - startTime) / 60000, 1e-9);
 
-      const typedCount = inputG.length;
-      const correctCount = countCorrect(sentenceG, inputG);
-
-      const currentGpm = correctCount / minutes;
-      setGpm(Math.round(currentGpm));
-
-      setAccuracy(typedCount === 0 ? 100 : Math.round((correctCount / typedCount) * 100));
+      const typed = inputG.length;
+      const correct = countCorrect(sentenceG, inputG);
+      setGpm(Math.round(correct / minutes));
+      setAccuracy(typed === 0 ? 100 : Math.round((correct / typed) * 100));
     }, 1000);
 
     return () => clearInterval(tickRef.current);
   }, [startTime, endTime, inputG, sentenceG]);
 
-  // Freeze timer when finished
   useEffect(() => {
-    if (startTime && isFinished && !endTime) {
-      setEndTime(Date.now());
-    }
+    if (startTime && isFinished && !endTime) setEndTime(Date.now());
   }, [isFinished, startTime, endTime]);
 
   const loadRandomSentence = () => {
@@ -86,17 +73,36 @@ export default function TypingPractice() {
     requestAnimationFrame(() => inputRef.current?.focus());
   };
 
-  // Handle IME input
-  const isComposingRef = useRef(false);
-  const handleCompositionStart = () => { isComposingRef.current = true; };
-  const handleCompositionEnd = (e) => {
-    isComposingRef.current = false;
-    setInput(e.target.value);
-  };
-  const handleInputChange = (e) => {
-    if (isComposingRef.current) return;
-    setInput(e.target.value);
-  };
+  // IME-safe input
+  const composingRef = useRef(false);
+  const onCompStart = () => { composingRef.current = true; };
+  const onCompEnd = (e) => { composingRef.current = false; setInput(e.target.value); };
+  const onChange = (e) => { if (!composingRef.current) setInput(e.target.value); };
+
+  // --- NEW: group runs for iOS shaping ---
+  const groupedRuns = useMemo(() => {
+    // States: 'correct' | 'incorrect' | 'rest'
+    const runs = [];
+    let i = 0;
+    // portion that has been typed
+    while (i < inputG.length && i < sentenceG.length) {
+      const isCorrect = inputG[i] === sentenceG[i];
+      const state = isCorrect ? 'correct' : 'incorrect';
+      let j = i + 1;
+      while (j < inputG.length && j < sentenceG.length) {
+        const cur = inputG[j] === sentenceG[j] ? 'correct' : 'incorrect';
+        if (cur !== state) break;
+        j++;
+      }
+      runs.push({ state, text: sentenceG.slice(i, j).join('') });
+      i = j;
+    }
+    // remaining (untyped) part of the sentence
+    if (i < sentenceG.length) {
+      runs.push({ state: 'rest', text: sentenceG.slice(i).join('') });
+    }
+    return runs;
+  }, [inputG, sentenceG]);
 
   return (
     <div className={styles.container}>
@@ -104,12 +110,29 @@ export default function TypingPractice() {
 
       <div
         className={styles.sentenceDisplay}
-        style={{ whiteSpace: 'pre-wrap', lineHeight: '2rem' }}
+        style={{
+          // shaping-safe defaults
+          whiteSpace: 'pre-wrap',
+          letterSpacing: '0',       // critical: no tracking
+          wordBreak: 'keep-all',
+          WebkitTextSizeAdjust: '100%',
+          lineHeight: '2rem',
+          fontFamily:
+            "var(--font-geist-sans), 'Noto Sans Myanmar', 'Myanmar Sangam MN', 'Myanmar MN', 'Inter', sans-serif",
+        }}
       >
-        {sentenceG.map((g, i) => {
-          let cls = '';
-          if (i < inputG.length) cls = inputG[i] === g ? styles.correct : styles.incorrect;
-          return <span key={i} className={cls}>{g}</span>;
+        {groupedRuns.map((run, idx) => {
+          const cls =
+            run.state === 'correct'
+              ? styles.correct
+              : run.state === 'incorrect'
+              ? styles.incorrect
+              : undefined;
+          return (
+            <span key={idx} className={cls}>
+              {run.text}
+            </span>
+          );
         })}
       </div>
 
@@ -117,9 +140,9 @@ export default function TypingPractice() {
         ref={inputRef}
         className={styles.inputArea}
         value={input}
-        onChange={handleInputChange}
-        onCompositionStart={handleCompositionStart}
-        onCompositionEnd={handleCompositionEnd}
+        onChange={onChange}
+        onCompositionStart={onCompStart}
+        onCompositionEnd={onCompEnd}
         placeholder="Start typing here..."
         rows={3}
         dir="auto"
@@ -136,5 +159,6 @@ export default function TypingPractice() {
     </div>
   );
 }
+
 
 
