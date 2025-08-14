@@ -13,21 +13,23 @@
   font-size: 1.5rem;
   line-height: 2rem;
   max-width: 600px;
-
-  /* shaping-safe */
   white-space: pre-wrap;
-  word-break: keep-all;
-  overflow-wrap: normal;
   letter-spacing: 0;
   -webkit-text-size-adjust: 100%;
   -webkit-hyphens: none;
   hyphens: none;
-
   font-family: 'Padauk', var(--font-geist-sans), 'Noto Sans Myanmar', 'Myanmar Sangam MN', 'Myanmar MN', 'Inter', sans-serif;
-
   background-color: #f5f5f5;
   padding: 1rem;
   border-radius: 8px;
+}
+
+/* 👇 On narrow screens, allow wraps anywhere between clusters */
+@media (max-width: 640px) {
+  .sentenceDisplay {
+    word-break: normal;       /* allow breaking rules to apply */
+    overflow-wrap: anywhere;  /* break if needed to avoid overflow */
+  }
 }
 
 .correct   { color: #3cb371; }
