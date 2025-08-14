@@ -7,30 +7,31 @@
   text-align: center;
 }
 
-/* iOS-shaping-safe block */
+/* iOS shaping safe + explicit Padauk */
 .sentenceDisplay {
   margin: 1rem 0;
   font-size: 1.5rem;
   line-height: 2rem;
   max-width: 600px;
 
-  /* ✅ shaping-safe settings */
-  white-space: pre-wrap;       /* keep spaces/newlines; no forced mid-word wraps */
-  word-break: keep-all;        /* don't break grapheme clusters */
-  overflow-wrap: normal;       /* disable forced breaks (replaces word-wrap) */
-  letter-spacing: 0;           /* tracking breaks complex-script shaping */
+  /* shaping-safe */
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: normal;
+  letter-spacing: 0;
   -webkit-text-size-adjust: 100%;
+  -webkit-hyphens: none;
+  hyphens: none;
 
-  /* Myanmar-capable fallbacks */
-  font-family: var(--font-geist-sans), 'Noto Sans Myanmar', 'Myanmar Sangam MN', 'Myanmar MN', 'Inter', sans-serif;
+  font-family: 'Padauk', var(--font-geist-sans), 'Noto Sans Myanmar', 'Myanmar Sangam MN', 'Myanmar MN', 'Inter', sans-serif;
 
   background-color: #f5f5f5;
   padding: 1rem;
   border-radius: 8px;
 }
 
-.correct   { color: #3cb371; } /* medium-sea-green */
-.incorrect { color: #e57373; } /* soft red */
+.correct   { color: #3cb371; }
+.incorrect { color: #e57373; }
 
 .inputArea {
   width: 100%;
@@ -38,7 +39,10 @@
   height: 100px;
   padding: 1rem;
   font-size: 1.2rem;
-  font-family: var(--font-geist-sans), 'Noto Sans Myanmar', 'Myanmar Sangam MN', 'Myanmar MN', 'Inter', sans-serif;
+
+  /* same font to avoid mismatched shaping between input/display */
+  font-family: 'Padauk', var(--font-geist-sans), 'Noto Sans Myanmar', 'Myanmar Sangam MN', 'Myanmar MN', 'Inter', sans-serif;
+
   margin-bottom: 1rem;
   border-radius: 8px;
   border: 1px solid #ccc;
@@ -64,4 +68,3 @@
   transition: background-color 0.3s ease;
 }
 .restartButton:hover { background-color: #555; }
-

@@ -1,17 +1,22 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import sentences from '../data/sentences';
+import sentencesRaw from '../data/sentences';
 import styles from '../styles/TypingPractice.module.css';
 
+/** --- Grapheme utilities --- */
 const segmenter = typeof Intl !== 'undefined' && Intl.Segmenter
   ? new Intl.Segmenter('und', { granularity: 'grapheme' })
   : null;
 
-function toGraphemes(str) {
-  if (!segmenter) return Array.from(str);
+const toGraphemes = (str) => {
+  const s = (str ?? '').normalize('NFC'); // NFC normalization for safer shaping
+  if (!segmenter) return Array.from(s);
   const out = [];
-  for (const seg of segmenter.segment(str)) out.push(seg.segment);
+  for (const seg of segmenter.segment(s)) out.push(seg.segment);
   return out;
-}
+};
+
+/** Pre-normalize the dataset once */
+const sentences = sentencesRaw.map(s => (s ?? '').normalize('NFC'));
 
 export default function TypingPractice() {
   const [sentence, setSentence] = useState('');
@@ -20,8 +25,10 @@ export default function TypingPractice() {
   const [endTime, setEndTime] = useState(null);
   const [gpm, setGpm] = useState(0);
   const [accuracy, setAccuracy] = useState(100);
+
   const inputRef = useRef(null);
   const tickRef = useRef(null);
+  const composingRef = useRef(false);
 
   const sentenceG = useMemo(() => toGraphemes(sentence), [sentence]);
   const inputG = useMemo(() => toGraphemes(input), [input]);
@@ -48,10 +55,10 @@ export default function TypingPractice() {
     tickRef.current = setInterval(() => {
       const stopAt = endTime ?? Date.now();
       const minutes = Math.max((stopAt - startTime) / 60000, 1e-9);
-
       const typed = inputG.length;
       const correct = countCorrect(sentenceG, inputG);
-      setGpm(Math.round(correct / minutes));
+
+      setGpm(Math.round(correct / minutes)); // Correct graphemes per minute
       setAccuracy(typed === 0 ? 100 : Math.round((correct / typed) * 100));
     }, 1000);
 
@@ -74,33 +81,27 @@ export default function TypingPractice() {
   };
 
   // IME-safe input
-  const composingRef = useRef(false);
-  const onCompStart = () => { composingRef.current = true; };
-  const onCompEnd = (e) => { composingRef.current = false; setInput(e.target.value); };
-  const onChange = (e) => { if (!composingRef.current) setInput(e.target.value); };
+  const handleCompositionStart = () => { composingRef.current = true; };
+  const handleCompositionEnd = (e) => { composingRef.current = false; setInput(e.target.value); };
+  const handleChange = (e) => { if (!composingRef.current) setInput(e.target.value); };
 
-  // --- NEW: group runs for iOS shaping ---
+  // Grouped runs to avoid tons of inline boundaries (iOS-safe)
   const groupedRuns = useMemo(() => {
-    // States: 'correct' | 'incorrect' | 'rest'
     const runs = [];
     let i = 0;
-    // portion that has been typed
     while (i < inputG.length && i < sentenceG.length) {
-      const isCorrect = inputG[i] === sentenceG[i];
-      const state = isCorrect ? 'correct' : 'incorrect';
+      const ok = inputG[i] === sentenceG[i];
+      const state = ok ? 'correct' : 'incorrect';
       let j = i + 1;
       while (j < inputG.length && j < sentenceG.length) {
-        const cur = inputG[j] === sentenceG[j] ? 'correct' : 'incorrect';
-        if (cur !== state) break;
+        const curOk = inputG[j] === sentenceG[j];
+        if ((curOk ? 'correct' : 'incorrect') !== state) break;
         j++;
       }
       runs.push({ state, text: sentenceG.slice(i, j).join('') });
       i = j;
     }
-    // remaining (untyped) part of the sentence
-    if (i < sentenceG.length) {
-      runs.push({ state: 'rest', text: sentenceG.slice(i).join('') });
-    }
+    if (i < sentenceG.length) runs.push({ state: 'rest', text: sentenceG.slice(i).join('') });
     return runs;
   }, [inputG, sentenceG]);
 
@@ -108,31 +109,13 @@ export default function TypingPractice() {
     <div className={styles.container}>
       <h1>Typing Practice</h1>
 
-      <div
-        className={styles.sentenceDisplay}
-        style={{
-          // shaping-safe defaults
-          whiteSpace: 'pre-wrap',
-          letterSpacing: '0',       // critical: no tracking
-          wordBreak: 'keep-all',
-          WebkitTextSizeAdjust: '100%',
-          lineHeight: '2rem',
-          fontFamily:
-            "var(--font-geist-sans), 'Noto Sans Myanmar', 'Myanmar Sangam MN', 'Myanmar MN', 'Inter', sans-serif",
-        }}
-      >
+      {/* lang="mnw" hints iOS to pick correct font & shaping for Mon */}
+      <div className={styles.sentenceDisplay} lang="mnw">
         {groupedRuns.map((run, idx) => {
           const cls =
-            run.state === 'correct'
-              ? styles.correct
-              : run.state === 'incorrect'
-              ? styles.incorrect
-              : undefined;
-          return (
-            <span key={idx} className={cls}>
-              {run.text}
-            </span>
-          );
+            run.state === 'correct' ? styles.correct :
+            run.state === 'incorrect' ? styles.incorrect : undefined;
+          return <span key={idx} className={cls}>{run.text}</span>;
         })}
       </div>
 
@@ -140,12 +123,13 @@ export default function TypingPractice() {
         ref={inputRef}
         className={styles.inputArea}
         value={input}
-        onChange={onChange}
-        onCompositionStart={onCompStart}
-        onCompositionEnd={onCompEnd}
+        onChange={handleChange}
+        onCompositionStart={handleCompositionStart}
+        onCompositionEnd={handleCompositionEnd}
         placeholder="Start typing here..."
         rows={3}
         dir="auto"
+        lang="mnw"
       />
 
       <div className={styles.stats}>
@@ -159,6 +143,3 @@ export default function TypingPractice() {
     </div>
   );
 }
-
-
-

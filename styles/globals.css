@@ -1,7 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+/* Mon/Myanmar font with full shaping support */
+@import url('https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&display=swap');
 
 body {
-    font-family: var(--font-geist-sans), 'Inter', sans-serif, 'Noto Sans Myanmar';
+    font-family: 'Padauk' , var(--font-geist-sans), 'Inter', sans-serif, 'Noto Sans Myanmar';
     margin: 0;
     padding: 0;
     background-color: #f9f9f9;
