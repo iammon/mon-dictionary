@@ -1,11 +1,63 @@
+/* Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 /* Mon/Myanmar font with full shaping support */
 @import url('https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&display=swap');
 
+/* Predictable sizing everywhere */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Base typography + colors */
 body {
-    font-family: 'Padauk' , var(--font-geist-sans), 'Inter', sans-serif, 'Noto Sans Myanmar';
-    margin: 0;
-    padding: 0;
-    background-color: #f9f9f9;
-    color: #333;
+  font-family: 'Padauk', var(--font-geist-sans), 'Inter', 'Noto Sans Myanmar', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9;
+  color: #333;
+  -webkit-text-size-adjust: 100%; /* iOS: avoid unexpected zoom/resizing */
+}
+
+/* Lock the app to the viewport (no page scroll) */
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Next.js root stretches full height */
+#__next {
+  height: 100%;
+}
+
+/* App shell: navbar (auto) + content (fills the rest) */
+/* Use this class on the <main> in _app.js */
+.app-shell {
+  /* Fallback sequence to cover older/newer Safari */
+  height: 100vh;
+  height: 100svh;
+  height: 100dvh;
+
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow: hidden; /* nothing outside the shell can scroll */
+}
+
+/* Per-page viewport container around <Component /> */
+/* Use this class on a wrapper div in _app.js */
+.viewport {
+  min-height: 0;     /* critical so the child can respect overflow */
+  display: flex;     /* center small pages nicely */
+  justify-content: center;
+  align-items: center;
+  padding: clamp(12px, 2vw, 24px);
+  overflow: hidden;  /* enforce no scroll; change to auto per-page if you need scrolling later */
+}
+
+/* Sensible defaults for media (prevents accidental overflow) */
+img, svg, video, canvas {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }

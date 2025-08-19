@@ -1,41 +1,62 @@
 .navbar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #333;
-    padding: 1rem 2rem;
+  flex-shrink: 0;                /* don’t collapse in grid */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #333;
+  padding: 0.75rem 1rem;         /* slightly smaller padding to fit on mobile */
+  border-bottom: 1px solid #222; /* subtle divider */
 }
 
 .logo a {
-    color: #fff;
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-decoration: none;
+  color: #fff;
+  font-size: 1.25rem;            /* scale down slightly for smaller screens */
+  font-weight: bold;
+  text-decoration: none;
+  white-space: nowrap;           /* never break into two lines */
 }
 
 .navLinks {
-    list-style: none;
-    display: flex;
-    gap: 1.5rem;
-    margin: 0;
-    padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;               /* allow wrapping if viewport is too narrow */
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
 }
 
 .navLinks li a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 1rem;
+  color: #fff;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: transform 0.2s ease, color 0.2s ease;
+  white-space: nowrap;           /* prevents link text from splitting */
 }
 
-/* ✅ Active link styling */
+/* Active link styling */
 .activeLink {
-    color: #444;
-    transform: scale(1.1);
-    font-weight: bold;
-    transition: transform 0.2s ease, color 0.2s ease;
+  color: #ffaa00;                /* make active link pop */
+  font-weight: bold;
+  transform: scale(1.05);
 }
 
 .navLinks li a:hover {
-    color: #ffaa00;
-    transform: scale(1.05);
+  color: #ffaa00;
+  transform: scale(1.05);
 }
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0.5rem;             /* tighter padding */
+  }
+
+  .navLinks {
+    gap: 0.75rem;                /* smaller gaps */
+  }
+
+  .navLinks li a {
+    font-size: 0.9rem;           /* scale down text slightly */
+  }
+}
+
