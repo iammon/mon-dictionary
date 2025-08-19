@@ -55,13 +55,12 @@
 
 .discordSection {
   display: flex;
-  align-items: center;
+  flex-direction: column;   /* stack children vertically */
+  align-items: center;      /* center horizontally */
   justify-content: center;
-  gap: 12px;
+  gap: 8px;                 /* spacing between text and image */
   text-align: center;
-
-  /* keep it small so it doesn't push content over */
-  margin-top: 8px;
+  margin-top: 12px;
 }
 
 .discordText {
@@ -72,7 +71,7 @@
 }
 
 .discordIcon {
-  display: inline-block;
+  display: block;
 }
 
 /* Tiny screens: tighten spacing */
