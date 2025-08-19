@@ -15,6 +15,7 @@
 }
 
 .monTitle {
+  font-family: 'Noto Serif Display', serif;
   margin: 0 0 8px 0;
   font-size: clamp(1.25rem, 3.5vw, 1.75rem);
   text-align: center;
