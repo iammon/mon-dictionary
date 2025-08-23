@@ -19,8 +19,8 @@ export default function Navbar() {
         </li>
         <li>
           <Link
-            href="/learn-mon"
-            className={currentPath === '/learn-mon' ? styles.activeLink : undefined}
+            href="/learn-mon-digits"
+            className={currentPath === '/learn-mon-digits' ? styles.activeLink : undefined}
           >
             Learn Mon
           </Link>
