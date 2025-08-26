@@ -59,7 +59,7 @@ export default function Home() {
           <p className={styles.discordText}>
             Join us on Discord by clicking the icon to help contribute to the Mon Dictionary.
           </p>
-          <a href="https://discord.gg/Mv8TghU2" target="_blank" rel="noopener noreferrer">
+          <a href="https://discord.gg/vng8SMJXmy" target="_blank" rel="noopener noreferrer">
             <Image
               src="/discord.svg"
               alt="Discord Icon"
