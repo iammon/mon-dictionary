@@ -17,11 +17,17 @@ for (const letter of Object.keys(dictionary)) {
 export default function handler(req, res) {
   const { query } = req.query;
 
-  if (!query) {
+  if (!query || typeof query !== 'string') {
     return res.status(400).json({ error: 'Query is required' });
   }
 
-  const firstLetter = query[0].toLowerCase();
+  const normalizedQuery = query.trim().toLowerCase();
+
+  if (!normalizedQuery) {
+    return res.status(400).json({ error: 'Query is required' });
+  }
+
+  const firstLetter = normalizedQuery[0];
   const bucket = sortedDictionary[firstLetter];
 
   if (!bucket) {
@@ -29,7 +35,9 @@ export default function handler(req, res) {
   }
 
   const { entries, sortedKeys } = bucket;
-  const startIndex = sortedKeys.findIndex((key) => key.startsWith(query));
+  const startIndex = sortedKeys.findIndex((key) =>
+    key.startsWith(normalizedQuery)
+  );
 
   const results =
     startIndex !== -1
