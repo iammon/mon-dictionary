@@ -5,6 +5,7 @@ import Script from 'next/script';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { GeistSans } from 'geist/font/sans';
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 // Your GA4 Measurement ID
 const GA_ID = 'G-BP8635KHJW';
@@ -71,6 +72,9 @@ export default function MyApp({ Component, pageProps }) {
       <div className="viewport">
         <Component {...pageProps} />
       </div>
+
+      <SpeedInsights />
+      
     </main>
   );
 }
